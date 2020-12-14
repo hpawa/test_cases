@@ -1,5 +1,4 @@
 import unittest
-import requests
 
 from tasks.dict_flatter import flatter
 from tasks.xml_depth import get_xml_depth
@@ -8,15 +7,15 @@ from tasks.xml_depth import get_xml_depth
 class TaskTest(unittest.TestCase):
     def test_dict(self):
         d = {
-            "a": 5,
-            "b": 6,
             "c": {
                 "f": 9,
                 "g": {
                     "m": 17,
                     "n": 3
                 }
-            }
+            },
+            "a": 5,
+            "b": 6,
         }
         true_res = {
             'a': 5,
@@ -25,7 +24,9 @@ class TaskTest(unittest.TestCase):
             'c.g.m': 17,
             'c.g.n': 3
         }
-        self.assertDictEqual(flatter(d), true_res)
+        a = {}
+        flatter(d, p_d=a)
+        self.assertDictEqual(a, true_res)
 
     def test_xml(self):
         xml = """
@@ -37,7 +38,6 @@ class TaskTest(unittest.TestCase):
         </feed>
         """
         self.assertEqual(get_xml_depth(xml), 1)
-        print(get_xml_depth(requests.get('https://www.npbfx.com/en/feed/').content))
 
 
 if __name__ == "__main__":
