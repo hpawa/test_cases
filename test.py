@@ -1,11 +1,14 @@
 import unittest
 
-from tasks.dict_flatter import flatter
+from tasks.dict_flatter import flatter, value_by_key
 from tasks.xml_depth import get_xml_depth
 
 
 class TaskTest(unittest.TestCase):
-    def test_dict(self):
+    def setUp(self):
+        self.true_a_d = {'a__b__c': 1, 'a__d': 2, 'a__e__f': 3, 'g': 4, 'e__f__h': 5, 'e__z': 6}
+
+    def test_flatter(self):
         d = {
             "c": {
                 "f": 9,
@@ -27,6 +30,32 @@ class TaskTest(unittest.TestCase):
         a = {}
         flatter(d, p_d=a)
         self.assertDictEqual(a, true_res)
+
+    def test_flatter_delimeter(self):
+        a_d = {
+            'a': {
+                'b': {
+                    'c': 1
+                },
+                'd': 2,
+                'e': {
+                    'f': 3
+                }
+            },
+            'g': 4,
+            'e': {
+                'f': {
+                    'h': 5
+                },
+                'z': 6
+            }
+        }
+        b = {}
+        flatter(a_d, p_d=b, delimeter='__')
+        self.assertEqual(b, self.true_a_d)
+
+    def test_value_by_key(self):
+        self.assertEqual(value_by_key(self.true_a_d, 'a__e__f'), 3)
 
     def test_xml(self):
         xml = """
